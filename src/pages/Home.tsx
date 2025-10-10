@@ -4,7 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Building2, CheckCircle, Award, Users } from "lucide-react";
 import heroImage from "@/assets/hero-construction.jpg";
 import teamImage from "@/assets/team-construction.jpg";
-import planningImage from "@/assets/team-planning.jpg";
+import processTechnologyImage from "@/assets/process-technology.jpg";
+import modernHomeImage from "@/assets/building-modern-home.jpg";
+import commercialBuildingImage from "@/assets/building-commercial.jpg";
+import renovationInteriorImage from "@/assets/building-renovation-interior.jpg";
+import buildingInProgressImage from "@/assets/building-in-progress.jpg";
 
 const Home = () => {
   const features = [
@@ -111,15 +115,195 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Services Preview */}
+      {/* Building Showcase Gallery */}
+      <section className="py-20 bg-gradient-to-b from-background to-card">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12 animate-fade-in">
+            <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+              <span className="text-primary font-semibold text-sm">OUR PORTFOLIO</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Exceptional Projects, <span className="text-primary">Exceptional Results</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              From luxury residences to commercial landmarks, explore the quality and craftsmanship that defines Lion Cage Construction
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {/* Modern Home */}
+            <Card className="group overflow-hidden bg-card border-border hover:border-primary transition-all duration-300 animate-slide-up">
+              <div className="relative h-64 overflow-hidden">
+                <img 
+                  src={modernHomeImage} 
+                  alt="Luxury modern residential construction" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full mb-2">
+                    RESIDENTIAL
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Luxury Modern Homes</h3>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground mb-4">
+                  Custom-designed luxury homes featuring contemporary architecture, premium materials, and sustainable building practices.
+                </p>
+                <Link to="/gallery" className="inline-flex items-center text-primary font-semibold hover:underline">
+                  View Projects
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Commercial Building */}
+            <Card className="group overflow-hidden bg-card border-border hover:border-primary transition-all duration-300 animate-slide-up" style={{ animationDelay: "100ms" }}>
+              <div className="relative h-64 overflow-hidden">
+                <img 
+                  src={commercialBuildingImage} 
+                  alt="Commercial office building construction" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full mb-2">
+                    COMMERCIAL
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Corporate Buildings</h3>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground mb-4">
+                  State-of-the-art commercial spaces designed to enhance productivity and impress clients with modern amenities.
+                </p>
+                <Link to="/gallery" className="inline-flex items-center text-primary font-semibold hover:underline">
+                  View Projects
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Renovation */}
+            <Card className="group overflow-hidden bg-card border-border hover:border-primary transition-all duration-300 animate-slide-up" style={{ animationDelay: "200ms" }}>
+              <div className="relative h-64 overflow-hidden">
+                <img 
+                  src={renovationInteriorImage} 
+                  alt="Premium interior renovation and remodeling" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full mb-2">
+                    RENOVATION
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Interior Transformations</h3>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground mb-4">
+                  Breathe new life into existing spaces with expert renovations that blend style, function, and timeless elegance.
+                </p>
+                <Link to="/gallery" className="inline-flex items-center text-primary font-semibold hover:underline">
+                  View Projects
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg px-10">
+              <Link to="/gallery">Explore Full Portfolio</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
       <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Building in Progress Image */}
+            <div className="animate-slide-up">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={buildingInProgressImage} 
+                  alt="Quality construction in progress" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="animate-fade-in">
+              <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+                <span className="text-primary font-semibold text-sm">WHY CHOOSE LION CAGE</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                Building More Than Structures—Building <span className="text-primary">Trust</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                For over 25 years, we've been the construction partner of choice for homeowners and businesses who demand excellence. Our commitment goes beyond bricks and mortar—we build lasting relationships.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                    <CheckCircle className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground text-lg mb-1">Licensed & Fully Insured</h4>
+                    <p className="text-muted-foreground">Complete peace of mind with comprehensive insurance coverage and certified professionals.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                    <Award className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground text-lg mb-1">Award-Winning Quality</h4>
+                    <p className="text-muted-foreground">Recognized for excellence in construction, design, and customer satisfaction year after year.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                    <Building2 className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground text-lg mb-1">Comprehensive Services</h4>
+                    <p className="text-muted-foreground">From concept to completion, we handle every aspect—design, permits, construction, and finishing.</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <Link to="/about">Discover Our Story</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Preview */}
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Our Services
+              Complete Construction <span className="text-primary">Solutions</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive construction solutions tailored to your needs
+              Whatever your project needs, we have the expertise and resources to deliver exceptional results
             </p>
           </div>
 
@@ -241,8 +425,8 @@ const Home = () => {
             <div className="animate-slide-up order-1 lg:order-2">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src={planningImage} 
-                  alt="Construction planning and collaboration" 
+                  src={processTechnologyImage} 
+                  alt="Modern construction technology and digital planning" 
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
