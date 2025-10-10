@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, CheckCircle, Award, Users } from "lucide-react";
 import heroImage from "@/assets/hero-construction.jpg";
+import teamImage from "@/assets/team-construction.jpg";
+import planningImage from "@/assets/team-planning.jpg";
 
 const Home = () => {
   const features = [
@@ -167,8 +169,91 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Team Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Team Image */}
+            <div className="animate-slide-up">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={teamImage} 
+                  alt="Lion Cage Construction Professional Team" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+              </div>
+            </div>
+
+            {/* Team Content */}
+            <div className="animate-fade-in">
+              <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+                <span className="text-primary font-semibold text-sm">MEET OUR EXPERTS</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                Built by Professionals Who <span className="text-primary">Care</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                Our team of 50+ certified professionals brings over 25 years of combined expertise to every project. From skilled craftsmen to experienced project managers, each member is dedicated to delivering excellence.
+              </p>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                We believe that great construction starts with great people. That's why we invest in continuous training, safety certifications, and cutting-edge technology to ensure your project exceeds expectations.
+              </p>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <div className="text-3xl font-bold text-primary mb-2">100%</div>
+                  <p className="text-muted-foreground">Licensed & Insured</p>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-primary mb-2">25+</div>
+                  <p className="text-muted-foreground">Years Experience</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Planning Process Section */}
       <section className="py-20 bg-card">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Content First on Desktop */}
+            <div className="animate-fade-in order-2 lg:order-1">
+              <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+                <span className="text-primary font-semibold text-sm">OUR PROCESS</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                Every Project Starts with a <span className="text-primary">Plan</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                Success in construction isn't just about building—it's about planning. Our meticulous approach ensures every detail is considered before breaking ground, saving you time, money, and stress.
+              </p>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                From initial consultation to final walkthrough, we keep you informed every step of the way. Our transparent communication and detailed project timelines mean no surprises—just results that exceed your expectations.
+              </p>
+              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <Link to="/about">Learn About Our Process</Link>
+              </Button>
+            </div>
+
+            {/* Planning Image */}
+            <div className="animate-slide-up order-1 lg:order-2">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={planningImage} 
+                  alt="Construction planning and collaboration" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">

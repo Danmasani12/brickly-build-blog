@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import teamContactImage from "@/assets/team-contact.jpg";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -70,6 +71,59 @@ const Contact = () => {
       </section>
 
       <div className="container mx-auto px-4">
+        {/* Team Introduction Section */}
+        <section className="mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Team Image */}
+            <div className="animate-slide-up">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={teamContactImage} 
+                  alt="Lion Cage Construction Team ready to help" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                <div className="absolute bottom-8 left-8 right-8">
+                  <h3 className="text-3xl font-bold text-white mb-2">Your Project Partners</h3>
+                  <p className="text-white/90 text-lg">Dedicated to bringing your vision to life</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Content */}
+            <div className="animate-fade-in">
+              <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+                <span className="text-primary font-semibold text-sm">LET'S CONNECT</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                Talk to the Experts Who <span className="text-primary">Deliver</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                Behind every successful project is a team that truly cares. Our experienced professionals are ready to listen, advise, and transform your ideas into reality with precision and passion.
+              </p>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                Whether you're planning a dream home, expanding your business, or renovating a space, we're here to guide you through every decision. Reach out today—let's start building something extraordinary together.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a 
+                  href="tel:+1234567890"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  Call Now
+                </a>
+                <a 
+                  href="mailto:info@lioncage.com"
+                  className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  <Mail className="w-5 h-5 mr-2" />
+                  Email Us
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
           {/* Contact Information Cards */}
           {contactInfo.map((info, index) => (
