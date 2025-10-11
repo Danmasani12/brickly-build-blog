@@ -14,6 +14,171 @@ export type Database = {
   }
   public: {
     Tables: {
+      gallery_images: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          gallery_post_id: string
+          id: string
+          image_url: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          gallery_post_id: string
+          id?: string
+          image_url: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          gallery_post_id?: string
+          id?: string
+          image_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_images_gallery_post_id_fkey"
+            columns: ["gallery_post_id"]
+            isOneToOne: false
+            referencedRelation: "gallery_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gallery_posts: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      realty_bedrooms: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          realty_post_id: string
+          sqm: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          realty_post_id: string
+          sqm: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          realty_post_id?: string
+          sqm?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "realty_bedrooms_realty_post_id_fkey"
+            columns: ["realty_post_id"]
+            isOneToOne: false
+            referencedRelation: "realty_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      realty_images: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          image_url: string
+          realty_post_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url: string
+          realty_post_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          realty_post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "realty_images_realty_post_id_fkey"
+            columns: ["realty_post_id"]
+            isOneToOne: false
+            referencedRelation: "realty_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      realty_posts: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          kitchen_sqm: number | null
+          living_room_sqm: number | null
+          location: string
+          price: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          kitchen_sqm?: number | null
+          living_room_sqm?: number | null
+          location: string
+          price: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          kitchen_sqm?: number | null
+          living_room_sqm?: number | null
+          location?: string
+          price?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
