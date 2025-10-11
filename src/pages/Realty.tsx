@@ -1,76 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Bed, Bath, Square, Home } from "lucide-react";
-import residentialImage from "@/assets/project-residential.jpg";
-import commercialImage from "@/assets/project-commercial.jpg";
+import { MapPin, Square, Home } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface RealtyPost {
+  id: string;
+  title: string;
+  type: string;
+  category: string;
+  price: string;
+  location: string;
+  description: string;
+  living_room_sqm: number | null;
+  kitchen_sqm: number | null;
+  images: { image_url: string }[];
+  bedrooms: { name: string; sqm: number }[];
+}
 
 const Realty = () => {
   const [filter, setFilter] = useState("all");
+  const [properties, setProperties] = useState<RealtyPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const properties = [
-    {
-      id: 1,
-      title: "Luxury Modern Villa",
-      type: "sale",
-      category: "residential",
-      price: "$850,000",
-      location: "Beverly Hills, CA",
-      beds: 4,
-      baths: 3,
-      sqft: "3,500",
-      image: residentialImage,
-      description: "Stunning modern villa with panoramic city views, high-end finishes, and smart home technology.",
-      features: ["Pool", "Garden", "Garage", "Smart Home"],
-      status: "For Sale",
-    },
-    {
-      id: 2,
-      title: "Downtown Office Space",
-      type: "lease",
-      category: "commercial",
-      price: "$12,000/mo",
-      location: "Downtown LA",
-      beds: null,
-      baths: 2,
-      sqft: "5,000",
-      image: commercialImage,
-      description: "Prime office space in the heart of downtown, perfect for growing businesses.",
-      features: ["Parking", "Elevator", "Conference Rooms", "24/7 Access"],
-      status: "For Lease",
-    },
-    {
-      id: 3,
-      title: "Beachfront Condo",
-      type: "sale",
-      category: "residential",
-      price: "$625,000",
-      location: "Santa Monica, CA",
-      beds: 2,
-      baths: 2,
-      sqft: "1,800",
-      image: residentialImage,
-      description: "Beautiful oceanfront condo with direct beach access and breathtaking sunset views.",
-      features: ["Ocean View", "Balcony", "Gym", "Concierge"],
-      status: "For Sale",
-    },
-    {
-      id: 4,
-      title: "Retail Shopping Space",
-      type: "lease",
-      category: "commercial",
-      price: "$8,500/mo",
-      location: "West Hollywood",
-      beds: null,
-      baths: 1,
-      sqft: "2,500",
-      image: commercialImage,
-      description: "High-traffic retail location with excellent visibility and parking.",
-      features: ["Storefront", "Storage", "Signage", "Parking"],
-      status: "For Lease",
-    },
-  ];
+  useEffect(() => {
+    fetchRealtyPosts();
+  }, []);
+
+  const fetchRealtyPosts = async () => {
+    try {
+      const { data: posts, error: postsError } = await supabase
+        .from("realty_posts")
+        .select(`
+          id,
+          title,
+          type,
+          category,
+          price,
+          location,
+          description,
+          living_room_sqm,
+          kitchen_sqm,
+          images:realty_images(image_url),
+          bedrooms:realty_bedrooms(name, sqm)
+        `)
+        .order("created_at", { ascending: false });
+
+      if (postsError) throw postsError;
+      
+      setProperties(posts || []);
+    } catch (error: any) {
+      toast.error("Failed to load realty posts");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filters = [
     { id: "all", label: "All Properties" },
@@ -119,79 +106,92 @@ const Realty = () => {
 
       {/* Properties Grid */}
       <section className="container mx-auto px-4 mb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {filteredProperties.map((property, index) => (
-            <Card
-              key={property.id}
-              className="bg-card border-border hover:border-primary transition-all duration-300 overflow-hidden group animate-slide-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="relative overflow-hidden aspect-[16/10]">
-                <img
-                  src={property.image}
-                  alt={property.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground hover:bg-primary">
-                  {property.status}
-                </Badge>
-              </div>
-
-              <CardHeader>
-                <div className="flex items-start justify-between mb-2">
-                  <CardTitle className="text-2xl text-foreground group-hover:text-primary transition-colors">
-                    {property.title}
-                  </CardTitle>
-                  <span className="text-2xl font-bold text-primary whitespace-nowrap ml-4">
-                    {property.price}
-                  </span>
-                </div>
-                <div className="flex items-center text-muted-foreground">
-                  <MapPin className="w-4 h-4 mr-2 text-primary" />
-                  <span>{property.location}</span>
-                </div>
-              </CardHeader>
-
-              <CardContent>
-                <p className="text-muted-foreground mb-4">{property.description}</p>
-
-                {/* Property Details */}
-                <div className="flex flex-wrap gap-4 mb-4 py-4 border-y border-border">
-                  {property.beds && (
-                    <div className="flex items-center">
-                      <Bed className="w-5 h-5 text-primary mr-2" />
-                      <span className="text-foreground font-medium">{property.beds} Beds</span>
-                    </div>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading properties...</p>
+          </div>
+        ) : filteredProperties.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No properties found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {filteredProperties.map((property, index) => (
+              <Card
+                key={property.id}
+                className="bg-card border-border hover:border-primary transition-all duration-300 overflow-hidden group animate-slide-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="relative overflow-hidden aspect-[16/10]">
+                  <img
+                    src={property.images[0]?.image_url || "/placeholder.svg"}
+                    alt={property.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground hover:bg-primary">
+                    {property.type === "sale" ? "For Sale" : "For Lease"}
+                  </Badge>
+                  {property.images.length > 1 && (
+                    <Badge className="absolute top-4 left-4 bg-background/80 text-foreground">
+                      {property.images.length} photos
+                    </Badge>
                   )}
-                  <div className="flex items-center">
-                    <Bath className="w-5 h-5 text-primary mr-2" />
-                    <span className="text-foreground font-medium">{property.baths} Baths</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Square className="w-5 h-5 text-primary mr-2" />
-                    <span className="text-foreground font-medium">{property.sqft} sqft</span>
-                  </div>
                 </div>
 
-                {/* Features */}
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-foreground mb-2">Features:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {property.features.map((feature, idx) => (
-                      <Badge key={idx} variant="outline" className="border-primary/30 text-muted-foreground">
-                        {feature}
-                      </Badge>
-                    ))}
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-2">
+                    <CardTitle className="text-2xl text-foreground group-hover:text-primary transition-colors">
+                      {property.title}
+                    </CardTitle>
+                    <span className="text-2xl font-bold text-primary whitespace-nowrap ml-4">
+                      {property.price}
+                    </span>
                   </div>
-                </div>
+                  <div className="flex items-center text-muted-foreground">
+                    <MapPin className="w-4 h-4 mr-2 text-primary" />
+                    <span>{property.location}</span>
+                  </div>
+                </CardHeader>
 
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                  Contact for Details
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">{property.description}</p>
+
+                  {/* Property Details */}
+                  <div className="space-y-2 mb-4 py-4 border-y border-border">
+                    {property.bedrooms.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground mb-1">Bedrooms:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {property.bedrooms.map((bedroom, idx) => (
+                            <Badge key={idx} variant="outline" className="border-primary/30">
+                              {bedroom.name}: {bedroom.sqm} sqm
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {property.living_room_sqm && (
+                      <div className="flex items-center">
+                        <Square className="w-4 h-4 text-primary mr-2" />
+                        <span className="text-foreground">Living Room: {property.living_room_sqm} sqm</span>
+                      </div>
+                    )}
+                    {property.kitchen_sqm && (
+                      <div className="flex items-center">
+                        <Square className="w-4 h-4 text-primary mr-2" />
+                        <span className="text-foreground">Kitchen: {property.kitchen_sqm} sqm</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                    Contact for Details
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA Section */}

@@ -1,57 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import residentialImage from "@/assets/project-residential.jpg";
-import commercialImage from "@/assets/project-commercial.jpg";
-import renovationImage from "@/assets/project-renovation.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface GalleryPost {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  images: { image_url: string }[];
+}
 
 const Gallery = () => {
   const [filter, setFilter] = useState("all");
+  const [projects, setProjects] = useState<GalleryPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const projects = [
-    {
-      id: 1,
-      title: "Modern Family Home",
-      category: "residential",
-      image: residentialImage,
-      description: "Contemporary 4-bedroom family residence with open-plan living",
-    },
-    {
-      id: 2,
-      title: "Corporate Office Building",
-      category: "commercial",
-      image: commercialImage,
-      description: "State-of-the-art office complex with sustainable design",
-    },
-    {
-      id: 3,
-      title: "Luxury Kitchen Renovation",
-      category: "renovation",
-      image: renovationImage,
-      description: "Complete kitchen transformation with premium finishes",
-    },
-    {
-      id: 4,
-      title: "Waterfront Villa",
-      category: "residential",
-      image: residentialImage,
-      description: "Stunning waterfront property with panoramic views",
-    },
-    {
-      id: 5,
-      title: "Retail Shopping Center",
-      category: "commercial",
-      image: commercialImage,
-      description: "Multi-tenant retail complex with modern amenities",
-    },
-    {
-      id: 6,
-      title: "Historic Home Restoration",
-      category: "renovation",
-      image: renovationImage,
-      description: "Careful restoration preserving original character",
-    },
-  ];
+  useEffect(() => {
+    fetchGalleryPosts();
+  }, []);
+
+  const fetchGalleryPosts = async () => {
+    try {
+      const { data: posts, error: postsError } = await supabase
+        .from("gallery_posts")
+        .select(`
+          id,
+          title,
+          category,
+          description,
+          images:gallery_images(image_url)
+        `)
+        .order("created_at", { ascending: false });
+
+      if (postsError) throw postsError;
+      
+      setProjects(posts || []);
+    } catch (error: any) {
+      toast.error("Failed to load gallery posts");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const categories = [
     { id: "all", label: "All Projects" },
@@ -101,36 +93,51 @@ const Gallery = () => {
 
       {/* Gallery Grid */}
       <section className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project, index) => (
-            <Card
-              key={project.id}
-              className="bg-card border-border hover:border-primary transition-all duration-300 overflow-hidden group animate-scale-in"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <div className="relative overflow-hidden aspect-[4/3]">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-6 w-full">
-                    <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full mb-2 uppercase">
-                      {project.category}
-                    </span>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading gallery...</p>
+          </div>
+        ) : filteredProjects.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No projects found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProjects.map((project, index) => (
+              <Card
+                key={project.id}
+                className="bg-card border-border hover:border-primary transition-all duration-300 overflow-hidden group animate-scale-in"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <div className="relative overflow-hidden aspect-[4/3]">
+                  <img
+                    src={project.images[0]?.image_url || "/placeholder.svg"}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 w-full">
+                      <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full mb-2 uppercase">
+                        {project.category}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-muted-foreground">{project.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-muted-foreground">{project.description}</p>
+                  {project.images.length > 1 && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      +{project.images.length - 1} more {project.images.length === 2 ? "image" : "images"}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Stats Section */}
