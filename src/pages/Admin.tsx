@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Upload, Image as ImageIcon, Trash2, Plus } from "lucide-react";
+import { Upload, Image as ImageIcon, Trash2, Plus, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Select,
   SelectContent,
@@ -26,6 +28,8 @@ interface BlogPost {
 }
 
 const Admin = () => {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -36,6 +40,12 @@ const Admin = () => {
     category: "residential",
   });
   const [previewImage, setPreviewImage] = useState<string>("");
+
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,13 +103,23 @@ const Admin = () => {
     <div className="min-h-screen py-20 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="mb-12 animate-fade-in">
-          <h1 className="text-5xl font-bold text-foreground mb-4">
-            Admin <span className="text-primary">Dashboard</span>
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Manage your property listings and blog posts
-          </p>
+        <div className="mb-12 animate-fade-in flex items-center justify-between">
+          <div>
+            <h1 className="text-5xl font-bold text-foreground mb-4">
+              Admin <span className="text-primary">Dashboard</span>
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Manage your property listings and blog posts
+            </p>
+          </div>
+          <Button 
+            onClick={handleLogout}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
