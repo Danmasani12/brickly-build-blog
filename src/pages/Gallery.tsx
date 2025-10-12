@@ -160,6 +160,55 @@ const Gallery = () => {
           </div>
         </div>
       </section>
+
+      {/* Call to Action Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border-2 border-primary/20">
+          <div className="absolute inset-0 bg-[url('/src/assets/hero-construction.jpg')] bg-cover bg-center opacity-5"></div>
+          <div className="relative px-8 md:px-16 py-20 text-center">
+            <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+                Ready to Start Your <span className="text-primary">Dream Project?</span>
+              </h2>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Join hundreds of satisfied clients who have transformed their visions into reality. 
+                Our expert team is ready to bring your ideas to life with precision and excellence.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+                <Button 
+                  size="lg" 
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  onClick={() => window.location.href = '/contact'}
+                >
+                  Get Free Consultation
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-6 rounded-full transition-all duration-300 hover:scale-105"
+                  onClick={() => window.location.href = '/services'}
+                >
+                  Explore Services
+                </Button>
+              </div>
+              <div className="flex flex-wrap justify-center gap-8 pt-8 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                  <span>Free Project Assessment</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                  <span>24/7 Support Available</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                  <span>Licensed & Insured</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
