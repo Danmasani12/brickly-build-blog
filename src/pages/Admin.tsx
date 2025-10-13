@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { LogOut, UserPlus } from "lucide-react";
+import { LogOut, UserPlus, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -57,8 +58,8 @@ const Admin = () => {
   const [realtyPosts, setRealtyPosts] = useState<RealtyPost[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<{ id: string; type: "gallery" | "realty" } | null>(null);
-  const [selectedGalleryPost, setSelectedGalleryPost] = useState<string>("");
-  const [selectedRealtyPost, setSelectedRealtyPost] = useState<string>("");
+  const [selectedGalleryPosts, setSelectedGalleryPosts] = useState<string[]>([]);
+  const [selectedRealtyPosts, setSelectedRealtyPosts] = useState<string[]>([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "" });
 
@@ -144,8 +145,8 @@ const Admin = () => {
 
       toast.success("Post deleted successfully");
       fetchPosts();
-      setSelectedGalleryPost("");
-      setSelectedRealtyPost("");
+      setSelectedGalleryPosts([]);
+      setSelectedRealtyPosts([]);
     } catch (error: any) {
       toast.error("Failed to delete post");
       console.error(error);
@@ -153,6 +154,61 @@ const Admin = () => {
       setDeleteDialogOpen(false);
       setPostToDelete(null);
     }
+  };
+
+  const handleDeleteSelected = async () => {
+    const totalSelected = selectedGalleryPosts.length + selectedRealtyPosts.length;
+    
+    if (totalSelected === 0) {
+      toast.error("Please select at least one post to delete");
+      return;
+    }
+
+    try {
+      // Delete selected gallery posts
+      if (selectedGalleryPosts.length > 0) {
+        const { error } = await supabase
+          .from("gallery_posts")
+          .delete()
+          .in("id", selectedGalleryPosts);
+
+        if (error) throw error;
+      }
+
+      // Delete selected realty posts
+      if (selectedRealtyPosts.length > 0) {
+        const { error } = await supabase
+          .from("realty_posts")
+          .delete()
+          .in("id", selectedRealtyPosts);
+
+        if (error) throw error;
+      }
+
+      toast.success(`Successfully deleted ${totalSelected} post(s)`);
+      setSelectedGalleryPosts([]);
+      setSelectedRealtyPosts([]);
+      fetchPosts();
+    } catch (error: any) {
+      toast.error("Failed to delete selected posts");
+      console.error(error);
+    }
+  };
+
+  const toggleGalleryPost = (postId: string) => {
+    setSelectedGalleryPosts((prev) =>
+      prev.includes(postId)
+        ? prev.filter((id) => id !== postId)
+        : [...prev, postId]
+    );
+  };
+
+  const toggleRealtyPost = (postId: string) => {
+    setSelectedRealtyPosts((prev) =>
+      prev.includes(postId)
+        ? prev.filter((id) => id !== postId)
+        : [...prev, postId]
+    );
   };
 
   const handleCreateJuniorAdmin = async (e: React.FormEvent) => {
@@ -266,62 +322,100 @@ const Admin = () => {
             <Card className="bg-card border-border mt-8">
               <CardHeader>
                 <CardTitle className="text-2xl text-foreground">Delete Post</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Select one or multiple posts to delete
+                </p>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Gallery Posts Dropdown */}
-                  <div className="space-y-2">
-                    <Label>Delete Gallery Post</Label>
-                    <Select
-                      value={selectedGalleryPost}
-                      onValueChange={(value) => {
-                        setSelectedGalleryPost(value);
-                        handleDeleteClick(value, "gallery");
-                      }}
-                    >
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue placeholder="Select a gallery post to delete..." />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border z-50">
-                        {galleryPosts.length === 0 ? (
-                          <div className="p-2 text-sm text-muted-foreground">No gallery posts</div>
-                        ) : (
-                          galleryPosts.map((post) => (
-                            <SelectItem key={post.id} value={post.id}>
-                              {post.title} ({post.category})
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
+                  {/* Gallery Posts Selection */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold">Gallery Posts</Label>
+                    <div className="space-y-2 max-h-64 overflow-y-auto border border-border rounded-md p-3 bg-background">
+                      {galleryPosts.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No gallery posts</p>
+                      ) : (
+                        galleryPosts.map((post) => (
+                          <div
+                            key={post.id}
+                            className="flex items-start space-x-3 p-2 rounded hover:bg-accent/50 transition-colors"
+                          >
+                            <Checkbox
+                              id={`gallery-${post.id}`}
+                              checked={selectedGalleryPosts.includes(post.id)}
+                              onCheckedChange={() => toggleGalleryPost(post.id)}
+                              className="mt-1"
+                            />
+                            <label
+                              htmlFor={`gallery-${post.id}`}
+                              className="flex-1 cursor-pointer text-sm"
+                            >
+                              <div className="font-medium text-foreground">{post.title}</div>
+                              <div className="text-xs text-muted-foreground capitalize">
+                                {post.category}
+                              </div>
+                            </label>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    {selectedGalleryPosts.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        {selectedGalleryPosts.length} gallery post(s) selected
+                      </p>
+                    )}
                   </div>
 
-                  {/* Realty Posts Dropdown */}
-                  <div className="space-y-2">
-                    <Label>Delete Realty Post</Label>
-                    <Select
-                      value={selectedRealtyPost}
-                      onValueChange={(value) => {
-                        setSelectedRealtyPost(value);
-                        handleDeleteClick(value, "realty");
-                      }}
-                    >
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue placeholder="Select a realty post to delete..." />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border z-50">
-                        {realtyPosts.length === 0 ? (
-                          <div className="p-2 text-sm text-muted-foreground">No realty posts</div>
-                        ) : (
-                          realtyPosts.map((post) => (
-                            <SelectItem key={post.id} value={post.id}>
-                              {post.title} - {post.location}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
+                  {/* Realty Posts Selection */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold">Realty Posts</Label>
+                    <div className="space-y-2 max-h-64 overflow-y-auto border border-border rounded-md p-3 bg-background">
+                      {realtyPosts.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No realty posts</p>
+                      ) : (
+                        realtyPosts.map((post) => (
+                          <div
+                            key={post.id}
+                            className="flex items-start space-x-3 p-2 rounded hover:bg-accent/50 transition-colors"
+                          >
+                            <Checkbox
+                              id={`realty-${post.id}`}
+                              checked={selectedRealtyPosts.includes(post.id)}
+                              onCheckedChange={() => toggleRealtyPost(post.id)}
+                              className="mt-1"
+                            />
+                            <label
+                              htmlFor={`realty-${post.id}`}
+                              className="flex-1 cursor-pointer text-sm"
+                            >
+                              <div className="font-medium text-foreground">{post.title}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {post.location} • {post.price}
+                              </div>
+                            </label>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    {selectedRealtyPosts.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        {selectedRealtyPosts.length} realty post(s) selected
+                      </p>
+                    )}
                   </div>
+                </div>
+
+                {/* Delete Button */}
+                <div className="mt-6 flex justify-end">
+                  <Button
+                    onClick={handleDeleteSelected}
+                    variant="destructive"
+                    className="gap-2"
+                    disabled={selectedGalleryPosts.length === 0 && selectedRealtyPosts.length === 0}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Selected ({selectedGalleryPosts.length + selectedRealtyPosts.length})
+                  </Button>
                 </div>
               </CardContent>
             </Card>
