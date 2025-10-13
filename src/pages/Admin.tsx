@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { LogOut, Trash2 } from "lucide-react";
+import { LogOut, UserPlus } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -56,10 +57,29 @@ const Admin = () => {
   const [realtyPosts, setRealtyPosts] = useState<RealtyPost[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<{ id: string; type: "gallery" | "realty" } | null>(null);
+  const [selectedGalleryPost, setSelectedGalleryPost] = useState<string>("");
+  const [selectedRealtyPost, setSelectedRealtyPost] = useState<string>("");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "" });
 
   useEffect(() => {
     fetchPosts();
+    checkSuperAdminStatus();
   }, []);
+
+  const checkSuperAdminStatus = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .single();
+
+    setIsSuperAdmin(!!data);
+  };
 
   const fetchPosts = async () => {
     try {
@@ -124,12 +144,54 @@ const Admin = () => {
 
       toast.success("Post deleted successfully");
       fetchPosts();
+      setSelectedGalleryPost("");
+      setSelectedRealtyPost("");
     } catch (error: any) {
       toast.error("Failed to delete post");
       console.error(error);
     } finally {
       setDeleteDialogOpen(false);
       setPostToDelete(null);
+    }
+  };
+
+  const handleCreateJuniorAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newAdmin.name || !newAdmin.email || !newAdmin.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: newAdmin.email,
+        password: newAdmin.password,
+        options: {
+          data: {
+            name: newAdmin.name,
+          },
+          emailRedirectTo: `${window.location.origin}/admin`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        const { error: roleError } = await supabase
+          .from("user_roles")
+          .insert({
+            user_id: data.user.id,
+            role: "moderator",
+          });
+
+        if (roleError) throw roleError;
+
+        toast.success("Junior admin created successfully");
+        setNewAdmin({ name: "", email: "", password: "" });
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create junior admin");
     }
   };
 
@@ -199,84 +261,133 @@ const Admin = () => {
             </CardContent>
           </Card>
 
-          {/* Existing Posts Management */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-            {/* Gallery Posts */}
-            <Card className="bg-card border-border">
+          {/* Delete Posts Section - Only for Super Admins */}
+          {isSuperAdmin && (
+            <Card className="bg-card border-border mt-8">
               <CardHeader>
-                <CardTitle className="text-xl text-foreground">Gallery Posts</CardTitle>
+                <CardTitle className="text-2xl text-foreground">Delete Post</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {galleryPosts.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">No gallery posts yet</p>
-                  ) : (
-                    galleryPosts.map((post) => (
-                      <div
-                        key={post.id}
-                        className="flex items-center justify-between p-3 bg-background rounded-lg border border-border"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium text-foreground truncate">
-                            {post.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground capitalize">
-                            {post.category}
-                          </p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteClick(post.id, "gallery")}
-                          className="ml-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Gallery Posts Dropdown */}
+                  <div className="space-y-2">
+                    <Label>Delete Gallery Post</Label>
+                    <Select
+                      value={selectedGalleryPost}
+                      onValueChange={(value) => {
+                        setSelectedGalleryPost(value);
+                        handleDeleteClick(value, "gallery");
+                      }}
+                    >
+                      <SelectTrigger className="bg-background border-border">
+                        <SelectValue placeholder="Select a gallery post to delete..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover border-border z-50">
+                        {galleryPosts.length === 0 ? (
+                          <div className="p-2 text-sm text-muted-foreground">No gallery posts</div>
+                        ) : (
+                          galleryPosts.map((post) => (
+                            <SelectItem key={post.id} value={post.id}>
+                              {post.title} ({post.category})
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            {/* Realty Posts */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-xl text-foreground">Realty Posts</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {realtyPosts.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">No realty posts yet</p>
-                  ) : (
-                    realtyPosts.map((post) => (
-                      <div
-                        key={post.id}
-                        className="flex items-center justify-between p-3 bg-background rounded-lg border border-border"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium text-foreground truncate">
-                            {post.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground">
-                            {post.location} • {post.price}
-                          </p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteClick(post.id, "realty")}
-                          className="ml-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))
-                  )}
+                  {/* Realty Posts Dropdown */}
+                  <div className="space-y-2">
+                    <Label>Delete Realty Post</Label>
+                    <Select
+                      value={selectedRealtyPost}
+                      onValueChange={(value) => {
+                        setSelectedRealtyPost(value);
+                        handleDeleteClick(value, "realty");
+                      }}
+                    >
+                      <SelectTrigger className="bg-background border-border">
+                        <SelectValue placeholder="Select a realty post to delete..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover border-border z-50">
+                        {realtyPosts.length === 0 ? (
+                          <div className="p-2 text-sm text-muted-foreground">No realty posts</div>
+                        ) : (
+                          realtyPosts.map((post) => (
+                            <SelectItem key={post.id} value={post.id}>
+                              {post.title} - {post.location}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          )}
+
+          {/* Create Junior Admin Section - Only for Super Admins */}
+          {isSuperAdmin && (
+            <Card className="bg-card border-border mt-8">
+              <CardHeader>
+                <CardTitle className="text-2xl text-foreground flex items-center gap-2">
+                  <UserPlus className="w-6 h-6" />
+                  Create Junior Admin
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Junior admins can create and edit posts but cannot delete posts or create new admins
+                </p>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleCreateJuniorAdmin} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-name">Name *</Label>
+                      <Input
+                        id="admin-name"
+                        type="text"
+                        placeholder="Admin name"
+                        value={newAdmin.name}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                        className="bg-background border-border"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-email">Email *</Label>
+                      <Input
+                        id="admin-email"
+                        type="email"
+                        placeholder="admin@example.com"
+                        value={newAdmin.email}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                        className="bg-background border-border"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="admin-password">Password *</Label>
+                      <Input
+                        id="admin-password"
+                        type="password"
+                        placeholder="Minimum 6 characters"
+                        value={newAdmin.password}
+                        onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                        className="bg-background border-border"
+                        minLength={6}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" className="w-full md:w-auto">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Create Junior Admin
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
