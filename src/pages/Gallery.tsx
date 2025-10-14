@@ -16,6 +16,7 @@ const Gallery = () => {
   const [filter, setFilter] = useState("all");
   const [projects, setProjects] = useState<GalleryPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState<Record<string, number>>({});
 
   useEffect(() => {
     fetchGalleryPosts();
@@ -111,7 +112,7 @@ const Gallery = () => {
               >
                 <div className="relative overflow-hidden aspect-[4/3]">
                   <img
-                    src={project.images[0]?.image_url || "/placeholder.svg"}
+                    src={project.images[currentImageIndex[project.id] || 0]?.image_url || "/placeholder.svg"}
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -129,9 +130,25 @@ const Gallery = () => {
                   </h3>
                   <p className="text-muted-foreground">{project.description}</p>
                   {project.images.length > 1 && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      +{project.images.length - 1} more {project.images.length === 2 ? "image" : "images"}
-                    </p>
+                    <div className="flex gap-2 mt-4 flex-wrap">
+                      {project.images.map((image, imgIndex) => (
+                        <button
+                          key={imgIndex}
+                          onClick={() => setCurrentImageIndex(prev => ({ ...prev, [project.id]: imgIndex }))}
+                          className={`w-16 h-16 rounded-md overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
+                            (currentImageIndex[project.id] || 0) === imgIndex 
+                              ? 'border-primary shadow-lg' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <img
+                            src={image.image_url}
+                            alt={`${project.title} thumbnail ${imgIndex + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </CardContent>
               </Card>
