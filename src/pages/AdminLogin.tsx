@@ -12,16 +12,16 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, isAdmin, user } = useAuth();
+  const { signIn, isAdmin, isModerator, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Redirect if already logged in as admin
-    if (user && isAdmin) {
+    // Redirect if already logged in as admin or moderator
+    if (user && (isAdmin || isModerator)) {
       navigate("/admin");
     }
-  }, [user, isAdmin, navigate]);
+  }, [user, isAdmin, isModerator, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
