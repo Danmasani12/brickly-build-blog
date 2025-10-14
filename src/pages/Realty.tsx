@@ -184,7 +184,14 @@ const Realty = () => {
                     )}
                   </div>
 
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                    onClick={() => {
+                      const message = `Hello, I saw your project - ${property.title}, and I would like to know more about it.`;
+                      const whatsappUrl = `https://wa.me/2348098149314?text=${encodeURIComponent(message)}`;
+                      window.open(whatsappUrl, '_blank');
+                    }}
+                  >
                     Contact for Details
                   </Button>
                 </CardContent>
