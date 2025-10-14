@@ -263,11 +263,11 @@ const Gallery = () => {
           </button>
           
           {lightboxProject && (
-            <div className="relative w-full h-full flex items-center justify-center p-12">
+            <div className="relative w-full h-full flex items-center justify-center p-16">
               <img
                 src={lightboxProject.images[lightboxImageIndex]?.image_url}
                 alt={`${lightboxProject.title} - Image ${lightboxImageIndex + 1}`}
-                className="max-w-full max-h-full object-contain"
+                className="max-w-[90vw] max-h-[80vh] w-auto h-auto object-contain"
               />
               
               {lightboxProject.images.length > 1 && (
