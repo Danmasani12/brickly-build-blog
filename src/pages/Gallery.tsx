@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface GalleryPost {
   id: string;
@@ -17,6 +19,9 @@ const Gallery = () => {
   const [projects, setProjects] = useState<GalleryPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState<Record<string, number>>({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxProject, setLightboxProject] = useState<GalleryPost | null>(null);
+  const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
 
   useEffect(() => {
     fetchGalleryPosts();
@@ -57,6 +62,26 @@ const Gallery = () => {
     filter === "all"
       ? projects
       : projects.filter((project) => project.category === filter);
+
+  const openLightbox = (project: GalleryPost, imageIndex: number) => {
+    setLightboxProject(project);
+    setLightboxImageIndex(imageIndex);
+    setLightboxOpen(true);
+  };
+
+  const handlePrevImage = () => {
+    if (!lightboxProject) return;
+    setLightboxImageIndex((prev) => 
+      prev === 0 ? lightboxProject.images.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextImage = () => {
+    if (!lightboxProject) return;
+    setLightboxImageIndex((prev) => 
+      prev === lightboxProject.images.length - 1 ? 0 : prev + 1
+    );
+  };
 
   return (
     <div className="min-h-screen py-20">
@@ -134,7 +159,7 @@ const Gallery = () => {
                       {project.images.map((image, imgIndex) => (
                         <button
                           key={imgIndex}
-                          onClick={() => setCurrentImageIndex(prev => ({ ...prev, [project.id]: imgIndex }))}
+                          onClick={() => openLightbox(project, imgIndex)}
                           className={`w-16 h-16 rounded-md overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
                             (currentImageIndex[project.id] || 0) === imgIndex 
                               ? 'border-primary shadow-lg' 
@@ -226,6 +251,50 @@ const Gallery = () => {
           </div>
         </div>
       </section>
+
+      {/* Image Lightbox */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-background/95 backdrop-blur-sm">
+          <button
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 z-50 p-2 rounded-full bg-background/80 hover:bg-background transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          {lightboxProject && (
+            <div className="relative w-full h-full flex items-center justify-center p-12">
+              <img
+                src={lightboxProject.images[lightboxImageIndex]?.image_url}
+                alt={`${lightboxProject.title} - Image ${lightboxImageIndex + 1}`}
+                className="max-w-full max-h-full object-contain"
+              />
+              
+              {lightboxProject.images.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 hover:bg-background transition-all hover:scale-110"
+                  >
+                    <ChevronLeft className="w-8 h-8" />
+                  </button>
+                  
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 hover:bg-background transition-all hover:scale-110"
+                  >
+                    <ChevronRight className="w-8 h-8" />
+                  </button>
+
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-background/80 text-sm">
+                    {lightboxImageIndex + 1} / {lightboxProject.images.length}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
