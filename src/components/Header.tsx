@@ -33,7 +33,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -50,25 +50,25 @@ const Header = () => {
           </nav>
 
           {/* CTA Button - Desktop */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg">
               <Link to="/contact">Get a Quote</Link>
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile/Tablet Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
+            className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile/Tablet Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden py-4 space-y-2 animate-fade-in">
+          <nav className="lg:hidden py-4 space-y-2 animate-fade-in">
             {navItems.map((item) => (
               <Link
                 key={item.path}
