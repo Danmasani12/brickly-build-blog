@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Lock, Mail } from "lucide-react";
+import { Shield, Lock, Mail, X } from "lucide-react";
 import adminBg from "@/assets/admin-building-bg.jpg";
 
 const AdminLogin = () => {
@@ -64,6 +64,17 @@ const AdminLogin = () => {
       >
         <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80" />
       </div>
+
+      {/* Close Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate("/")}
+        className="absolute top-4 right-4 z-20 text-white hover:text-white hover:bg-white/20"
+        aria-label="Close"
+      >
+        <X size={24} />
+      </Button>
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md mx-4">
