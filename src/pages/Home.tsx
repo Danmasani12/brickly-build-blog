@@ -9,8 +9,17 @@ import modernHomeImage from "@/assets/building-modern-home.jpg";
 import commercialBuildingImage from "@/assets/building-commercial.jpg";
 import renovationInteriorImage from "@/assets/building-renovation-interior.jpg";
 import buildingInProgressImage from "@/assets/building-in-progress.jpg";
+import React, { useEffect, useState } from 'react';
 
 const Home = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [shouldShowText, setShouldShowText] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setShouldShowText(isHovered), isHovered ? 100 : 0);
+    return () => clearTimeout(timeout);
+  }, [isHovered]);
+
   const features = [
     {
       icon: CheckCircle,
@@ -35,9 +44,9 @@ const Home = () => {
   ];
 
   const stats = [
-    { number: "500+", label: "Projects Completed" },
-    { number: "25+", label: "Years Experience" },
-    { number: "100%", label: "Client Satisfaction" },
+    { number: "300+", label: "Projects Completed" },
+    { number: "20+", label: "Years Experience" },
+    { number: "98%", label: "Client Satisfaction" },
     { number: "50+", label: "Expert Team" },
   ];
 
@@ -57,13 +66,13 @@ const Home = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl animate-fade-in">
             <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
-              <span className="text-primary font-semibold text-sm">25+ YEARS OF EXCELLENCE</span>
+              <span className="text-primary font-semibold text-sm">20+ YEARS OF EXCELLENCE</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 text-foreground leading-tight">
-              Building Your <span className="text-primary">Dreams</span> to Reality
+              Building Your <span className="text-primary">Dreams</span> to <span className="text-primary">Reality</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-              From custom homes to commercial spaces, Lion Cage delivers quality construction solutions — on time, on budget, and built to last.
+              From custom homes to commercial spaces, we provide dependable construction services that are timely, cost-effective and enduring.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg px-8 shadow-lg">
@@ -123,10 +132,10 @@ const Home = () => {
               <span className="text-primary font-semibold text-sm">OUR PORTFOLIO</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Exceptional Projects, <span className="text-primary">Exceptional Results</span>
+              Transforming Ideas into <span className="text-primary">Exceptional Results</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              From luxury residences to commercial landmarks, explore the quality and craftsmanship that defines Lion Cage Construction
+              From luxury residences to commercial landmarks, explore the quality and craftsmanship that defines our construction legacy
             </p>
           </div>
 
@@ -151,12 +160,7 @@ const Home = () => {
                 <p className="text-muted-foreground mb-4">
                   Custom-designed luxury homes featuring contemporary architecture, premium materials, and sustainable building practices.
                 </p>
-                <Link to="/gallery" className="inline-flex items-center text-primary font-semibold hover:underline">
-                  View Projects
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                
               </CardContent>
             </Card>
 
@@ -180,12 +184,7 @@ const Home = () => {
                 <p className="text-muted-foreground mb-4">
                   State-of-the-art commercial spaces designed to enhance productivity and impress clients with modern amenities.
                 </p>
-                <Link to="/gallery" className="inline-flex items-center text-primary font-semibold hover:underline">
-                  View Projects
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                
               </CardContent>
             </Card>
 
@@ -209,12 +208,7 @@ const Home = () => {
                 <p className="text-muted-foreground mb-4">
                   Breathe new life into existing spaces with expert renovations that blend style, function, and timeless elegance.
                 </p>
-                <Link to="/gallery" className="inline-flex items-center text-primary font-semibold hover:underline">
-                  View Projects
-                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                
               </CardContent>
             </Card>
           </div>
@@ -246,13 +240,13 @@ const Home = () => {
             {/* Content */}
             <div className="animate-fade-in">
               <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
-                <span className="text-primary font-semibold text-sm">WHY CHOOSE LION CAGE</span>
+                <span className="text-primary font-semibold text-sm">WHY CHOOSE US?</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Building More Than Structures—Building <span className="text-primary">Trust</span>
+                Building More Than Structures...Building <span className="text-primary">Trust!</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                For over 25 years, we've been the construction partner of choice for homeowners and businesses who demand excellence. Our commitment goes beyond bricks and mortar—we build lasting relationships.
+                For over 20 years, we've been the construction partner of choice for homeowners and businesses who demand excellence.We build long-lasting relationships.
               </p>
               
               <div className="space-y-4 mb-8">
@@ -261,8 +255,8 @@ const Home = () => {
                     <CheckCircle className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground text-lg mb-1">Licensed & Fully Insured</h4>
-                    <p className="text-muted-foreground">Complete peace of mind with comprehensive insurance coverage and certified professionals.</p>
+                    <h4 className="font-semibold text-foreground text-lg mb-1">Licensed & Registered</h4>
+                    <p className="text-muted-foreground">Professional service backed by certification and realiablity. You can count on us for excellence, safety and trust.</p>
                   </div>
                 </div>
 
@@ -272,7 +266,7 @@ const Home = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground text-lg mb-1">Award-Winning Quality</h4>
-                    <p className="text-muted-foreground">Recognized for excellence in construction, design, and customer satisfaction year after year.</p>
+                    <p className="text-muted-foreground">Recognized for excellence in construction, design and customer satisfaction.</p>
                   </div>
                 </div>
 
@@ -282,7 +276,7 @@ const Home = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground text-lg mb-1">Comprehensive Services</h4>
-                    <p className="text-muted-foreground">From concept to completion, we handle every aspect—design, permits, construction, and finishing.</p>
+                    <p className="text-muted-foreground">From concept to completion, we handle every aspect including design, permits, construction and finishing.</p>
                   </div>
                 </div>
               </div>
@@ -327,19 +321,11 @@ const Home = () => {
             ].map((service, index) => (
               <Card key={index} className="bg-card border-border hover:border-primary transition-all duration-300 group animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
                 <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                  <h3 className="text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {service.title}
                   </h3>
-                  <p className="text-muted-foreground mb-6">{service.description}</p>
-                  <Link
-                    to={service.link}
-                    className="inline-flex items-center text-primary font-semibold hover:underline"
-                  >
-                    Learn More
-                    <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
+                  <p className="text-muted-foreground mb-0.1">{service.description}</p>
+                  
                 </CardContent>
               </Card>
             ))}
@@ -372,13 +358,13 @@ const Home = () => {
             {/* Team Content */}
             <div className="animate-fade-in">
               <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
-                <span className="text-primary font-semibold text-sm">MEET OUR EXPERTS</span>
+                <span className="text-primary font-semibold text-sm">MEET THE TEAM</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Built by Professionals Who <span className="text-primary">Care</span>
+                Built by Professionals you can <span className="text-primary">Trust</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Our team of 50+ certified professionals brings over 25 years of combined expertise to every project. From skilled craftsmen to experienced project managers, each member is dedicated to delivering excellence.
+                Our team of 50+ professionals brings over 20 years of combined expertise to every project. From skilled craftsmen to experienced project managers, each member is dedicated to delivering excellence.
               </p>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 We believe that great construction starts with great people. That's why we invest in continuous training, safety certifications, and cutting-edge technology to ensure your project exceeds expectations.
@@ -386,10 +372,10 @@ const Home = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <div className="text-3xl font-bold text-primary mb-2">100%</div>
-                  <p className="text-muted-foreground">Licensed & Insured</p>
+                  <p className="text-muted-foreground">Licensed & Registered</p>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-2">25+</div>
+                  <div className="text-3xl font-bold text-primary mb-2">20+</div>
                   <p className="text-muted-foreground">Years Experience</p>
                 </div>
               </div>
@@ -411,14 +397,8 @@ const Home = () => {
                 Every Project Starts with a <span className="text-primary">Plan</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Success in construction isn't just about building—it's about planning. Our meticulous approach ensures every detail is considered before breaking ground, saving you time, money, and stress.
+                Success in construction isn't just about building, it's about planning. Our meticulous approach ensures every detail is considered before breaking ground, saving you time, money, and stress.
               </p>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                From initial consultation to final walkthrough, we keep you informed every step of the way. Our transparent communication and detailed project timelines mean no surprises—just results that exceed your expectations.
-              </p>
-              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                <Link to="/about">Learn About Our Process</Link>
-              </Button>
             </div>
 
             {/* Planning Image */}
@@ -435,6 +415,30 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Floating WhatsApp Button */}
+      <div 
+        onMouseEnter={() => setIsHovered(true)} 
+        onMouseLeave={() => setIsHovered(false)}
+        className="fixed bottom-6 right-6 flex items-center justify-center cursor-pointer group z-50"
+      >
+        <a
+          href="https://wa.me/2348098149314?text=Hi%20there!%20I%27m%20interested%20in%20your%20construction%20services."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-4 rounded-full shadow-lg transition-all duration-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 32 32"
+            fill="currentColor"
+            className={`w-6 h-6 ${shouldShowText ? "mr-2" : ""}`}
+          >
+            <path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.654.882 5.112 2.402 7.133L5 29l7.072-1.849A11.92 11.92 0 0016 27c6.627 0 12-5.373 12-12S22.628 3 16.001 3zm.001 22c-1.945 0-3.792-.515-5.414-1.486l-.387-.23-4.206 1.098 1.125-4.097-.253-.397A9.92 9.92 0 016.001 15c0-5.514 4.486-10 10-10s10 4.486 10 10-4.487 10-9.999 10zm5.408-7.403c-.295-.147-1.748-.861-2.02-.96-.27-.1-.467-.148-.665.147-.197.295-.765.96-.938 1.157-.173.196-.346.222-.64.074-.295-.147-1.244-.458-2.37-1.46-.876-.782-1.467-1.748-1.64-2.043-.173-.295-.018-.454.13-.601.133-.132.295-.347.443-.521.148-.173.197-.295.296-.49.098-.197.049-.369-.025-.516-.075-.147-.665-1.607-.912-2.202-.24-.579-.485-.5-.665-.51l-.567-.01c-.197 0-.516.074-.787.37-.27.295-1.04 1.016-1.04 2.48 0 1.465 1.065 2.881 1.213 3.078.148.196 2.096 3.202 5.08 4.487.71.307 1.263.49 1.694.63.712.227 1.36.195 1.874.118.572-.085 1.748-.714 1.996-1.403.245-.689.245-1.278.172-1.404-.074-.123-.27-.197-.564-.344z" />
+          </svg>
+          {shouldShowText && <span className="whitespace-nowrap transition-opacity duration-200">Chat with us</span>}
+        </a>
+      </div>
 
       {/* CTA Section */}
       <section className="py-20">

@@ -1,25 +1,52 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import Admin from "./Admin";
 import ModeratorDashboard from "./ModeratorDashboard";
 import { Loader2 } from "lucide-react";
 
+interface User {
+  id: number;
+  role: "admin" | "moderator" | "user";
+  email: string;
+}
+
 const ProtectedAdmin = () => {
-  const { user, isAdmin, isModerator, loading } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        // Not logged in, redirect to login
-        navigate("/admin-login");
-      } else if (!isAdmin && !isModerator) {
-        // Logged in but not admin or moderator, redirect to home
-        navigate("/");
+    const fetchAdmin = async () => {
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        navigate("/admin-login", { replace: true });
+        return;
       }
-    }
-  }, [user, isAdmin, isModerator, loading, navigate]);
+
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+          throw new Error("Unauthorized");
+        }
+
+        const data = await res.json();
+        console.log("Fetched admin:", data);
+
+        setUser(data);
+      } catch (error) {
+        console.error("Error verifying admin:", error);
+        localStorage.removeItem("adminToken");
+        navigate("/admin-login", { replace: true });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdmin();
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -29,12 +56,22 @@ const ProtectedAdmin = () => {
     );
   }
 
-  if (!user || (!isAdmin && !isModerator)) {
-    return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Unauthorized access. Redirecting...
+      </div>
+    );
   }
 
-  // Show admin dashboard for admins, moderator dashboard for moderators
-  return isAdmin ? <Admin /> : <ModeratorDashboard />;
+  if (user.role === "admin") return <Admin />;
+  if (user.role === "moderator") return <ModeratorDashboard />;
+
+  return (
+    <div className="min-h-screen flex items-center justify-center text-gray-500">
+      Access Denied.
+    </div>
+  );
 };
 
 export default ProtectedAdmin;

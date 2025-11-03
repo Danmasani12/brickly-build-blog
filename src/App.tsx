@@ -16,6 +16,7 @@ import AdminLogin from "./pages/AdminLogin";
 import ProtectedAdmin from "./pages/ProtectedAdmin";
 import NotFound from "./pages/NotFound";
 
+
 const queryClient = new QueryClient();
 
 const App = () => (

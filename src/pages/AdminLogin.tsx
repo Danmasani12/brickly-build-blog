@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,20 +7,20 @@ import { useToast } from "@/hooks/use-toast";
 import { Shield, Lock, Mail, X } from "lucide-react";
 import adminBg from "@/assets/admin-building-bg.jpg";
 
+
+
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, isAdmin, isModerator, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Redirect if already logged in as admin or moderator
-    if (user && (isAdmin || isModerator)) {
-      navigate("/admin");
-    }
-  }, [user, isAdmin, isModerator, navigate]);
+    // Redirect if already logged in
+    const token = localStorage.getItem("adminToken");
+    if (token) navigate("/admin");
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,28 +36,49 @@ const AdminLogin = () => {
       return;
     }
 
-    const { error } = await signIn(email, password);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast({
+          title: "Authentication Failed",
+          description: data?.detail || data?.message || "Invalid credentials.",
+          variant: "destructive",
+        });
+      } else {
+        // ✅ Save session info
+        localStorage.setItem("adminUser", JSON.stringify(data.user));
+        localStorage.setItem("adminToken", data.token);
+        localStorage.setItem("adminRefresh", data.refresh);
+
+        toast({
+          title: "Welcome Back!",
+          description: "Redirecting to admin panel...",
+        });
+
+        setTimeout(() => navigate("/admin"), 1200);
+      }
+    } catch (error) {
       toast({
-        title: "Authentication Failed",
-        description: error.message || "Invalid credentials. Please try again.",
+        title: "Network Error",
+        description: "Unable to reach the server. Please try again later.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
-    } else {
-      toast({
-        title: "Welcome Back!",
-        description: "Redirecting to admin panel...",
-      });
-      // Navigation will happen automatically via useEffect
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div 
+      {/* Background */}
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${adminBg})` }}
       >
@@ -79,7 +99,6 @@ const AdminLogin = () => {
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md mx-4">
         <div className="bg-background/95 backdrop-blur-md rounded-2xl shadow-2xl border border-border p-8 animate-fade-in">
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
               <Shield className="w-8 h-8 text-primary" />
@@ -88,12 +107,12 @@ const AdminLogin = () => {
               Admin Access
             </h1>
             <p className="text-muted-foreground font-medium">
-              Are you an admin? Only administrators are allowed access.
+              Authorized personnel only.
             </p>
           </div>
 
-          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-foreground font-medium">
                 Email Address
@@ -112,6 +131,7 @@ const AdminLogin = () => {
               </div>
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password" className="text-foreground font-medium">
                 Password
@@ -130,6 +150,7 @@ const AdminLogin = () => {
               </div>
             </div>
 
+            {/* Submit */}
             <Button
               type="submit"
               className="w-full h-12 text-base font-semibold"
@@ -139,10 +160,9 @@ const AdminLogin = () => {
             </Button>
           </form>
 
-          {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Authorized personnel only. Unauthorized access is prohibited.
+              Unauthorized access is prohibited.
             </p>
           </div>
         </div>

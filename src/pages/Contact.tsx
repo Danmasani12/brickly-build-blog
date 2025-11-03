@@ -17,12 +17,37 @@ const Contact = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Thank you! We'll get back to you soon.", {
-      description: "Your message has been received successfully.",
-    });
-    setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast.success("Thank you! We'll get back to you soon.", {
+          description: "Your message has been received successfully.",
+        });
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      } else {
+        toast.error("Something went wrong. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      toast.error("Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -33,19 +58,19 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Phone",
-      details: ["+1 (234) 567-890", "+1 (234) 567-891"],
-      action: "tel:+1234567890",
+      details: ["+234 810 123 4567", "+234 803 987 6543"],
+      action: "tel:+2348101234567",
     },
     {
       icon: Mail,
       title: "Email",
-      details: ["info@lioncage.com", "sales@lioncage.com"],
+      details: ["info@lioncage.com", "support@lioncage.com"],
       action: "mailto:info@lioncage.com",
     },
     {
       icon: MapPin,
       title: "Location",
-      details: ["123 Construction Ave", "Building City, BC 12345"],
+      details: ["Wuse Zone 4", "Abuja, Nigeria"],
       action: null,
     },
     {
@@ -71,15 +96,15 @@ const Contact = () => {
       </section>
 
       <div className="container mx-auto px-4">
-        {/* Team Introduction Section */}
+        {/* Team Section */}
         <section className="mb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Team Image */}
+            {/* Image */}
             <div className="animate-slide-up">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img 
-                  src={teamContactImage} 
-                  alt="Lion Cage Construction Team ready to help" 
+                <img
+                  src={teamContactImage}
+                  alt="Lion Cage Construction Team ready to help"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
@@ -90,7 +115,7 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Team Content */}
+            {/* Text */}
             <div className="animate-fade-in">
               <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
                 <span className="text-primary font-semibold text-sm">LET'S CONNECT</span>
@@ -105,14 +130,14 @@ const Contact = () => {
                 Whether you're planning a dream home, expanding your business, or renovating a space, we're here to guide you through every decision. Reach out today—let's start building something extraordinary together.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="tel:+1234567890"
+                <a
+                  href="tel:+2348101234567"
                   className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   <Phone className="w-5 h-5 mr-2" />
                   Call Now
                 </a>
-                <a 
+                <a
                   href="mailto:info@lioncage.com"
                   className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors"
                 >
@@ -124,8 +149,8 @@ const Contact = () => {
           </div>
         </section>
 
+        {/* Contact Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-          {/* Contact Information Cards */}
           {contactInfo.map((info, index) => (
             <Card
               key={index}
@@ -153,8 +178,6 @@ const Contact = () => {
               </CardContent>
             </Card>
           ))}
-
-          {/* Placeholder for 4th card alignment */}
           <div className="hidden lg:block" />
         </div>
 
@@ -210,7 +233,7 @@ const Contact = () => {
                       type="tel"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="+1 (234) 567-890"
+                      placeholder="+234 810 123 4567"
                       className="bg-background border-border focus:border-primary"
                     />
                   </div>
@@ -250,24 +273,31 @@ const Contact = () => {
                 <Button
                   type="submit"
                   size="lg"
+                  disabled={loading}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg"
                 >
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </CardContent>
           </Card>
         </div>
 
-        {/* Map Section (Placeholder) */}
+        {/* Map */}
         <div className="mt-20">
           <Card className="bg-card border-border overflow-hidden">
-            <div className="aspect-[21/9] bg-muted flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
-                <p className="text-muted-foreground text-lg">Interactive Map Coming Soon</p>
-                <p className="text-muted-foreground text-sm">123 Construction Ave, Building City, BC 12345</p>
-              </div>
+            <div className="aspect-[21/9] relative">
+              <iframe
+                title="Lion Cage Construction Location - Wuse Zone 4, Abuja"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.2768678849917!2d7.484454074994943!3d9.06682589071686!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x104e0a53789e9083%3A0xfec6b1f9e65f70f4!2sWuse%20Zone%204%2C%20Abuja%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1698261234567!5m2!1sen!2sng"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 w-full h-full rounded-none"
+              ></iframe>
             </div>
           </Card>
         </div>

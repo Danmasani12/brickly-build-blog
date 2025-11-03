@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
-import logo from "@/assets/lion-cage-logo.jpg";
+import logo from "@/assets/lion-cage-logo.png";
 
 const Footer = () => {
   return (
@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="space-y-4">
             <img src={logo} alt="Lion Cage" className="h-16 w-auto" />
             <p className="text-muted-foreground text-sm">
-              Building dreams into reality with excellence, integrity, and craftsmanship.
+              Building dreams into reality with excellence, integrity and craftsmanship.
             </p>
             <div className="flex space-x-4">
               <a
@@ -99,27 +99,36 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start space-x-3 text-muted-foreground">
                 <MapPin size={20} className="mt-0.5 text-primary flex-shrink-0" />
-                <span className="text-sm">123 Construction Ave, Building City, BC 12345</span>
+                <span className="text-sm">Second Floor, No.21 Blantyre Steet, Beside Barcelona Hotel, Wuse II, FCT-Abuja.</span>
               </li>
               <li className="flex items-center space-x-3 text-muted-foreground">
                 <Phone size={20} className="text-primary flex-shrink-0" />
                 <a href="tel:+1234567890" className="text-sm hover:text-primary transition-colors">
-                  +1 (234) 567-890
+                  +234 803 928 5649
                 </a>
               </li>
               <li className="flex items-center space-x-3 text-muted-foreground">
                 <Mail size={20} className="text-primary flex-shrink-0" />
-                <a href="mailto:info@lioncage.com" className="text-sm hover:text-primary transition-colors">
-                  info@lioncage.com
+                <a href="mailto:info@lioncage.ng" className="text-sm hover:text-primary transition-colors">
+                  info@lioncage.ng
+                  lioncagenigltd@gmail.com
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 text-center">
+          <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Lion Cage Construction. All rights reserved.
+            © {new Date().getFullYear()} Lion Cage Construction. All rights reserved. | Powered by{" "}
+            <a
+              href="https://triscapelab.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-primary transition-colors"
+              >
+                Triscape Lab
+              </a>
           </p>
         </div>
       </div>
@@ -127,4 +136,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer;
