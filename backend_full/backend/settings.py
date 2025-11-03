@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from datetime import timedelta
 import pymysql
+from dotenv import load_dotenv
+
+load_dotenv()  
 
 pymysql.install_as_MySQLdb()
 
@@ -180,10 +183,12 @@ SIMPLE_JWT = {
 # ---------------------------------------------------
 # EMAIL SETTINGS (Gmail SMTP)
 # ---------------------------------------------------
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "danmasani12@gmail.com"
-EMAIL_HOST_PASSWORD = "llmywmjurgxtymun"  # Gmail App Password
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
